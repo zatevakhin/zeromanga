@@ -1,0 +1,112 @@
+{% extends "base.tt" %}
+
+{% block style %}
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/view.mobile.css") }}">
+{% end %}
+
+{% block javascript %}
+<!-- Локальные Джаба скрибты -->
+<script src="{{ static_url("javascript/jquery.touchswipe.min.js") }}"></script>
+{#<script src="{{ static_url("javascript/jquery.mobile-events.min.js") }}"></script>#}
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
+<script src="{{ static_url("javascript/hash.js") }}"></script>
+<script src="{{ static_url("javascript/view.mobile.js") }}"></script>
+{% end %}
+
+{% block body %}
+<div id="controls">
+    <div class="icon-buttons">
+        <a href="/" data-action="index"></a>
+        <a href="/search" data-action="search"></a>
+    </div>
+    <div class="manga-title">{{ manga["title"] }}</div>
+</div>
+
+<div id="article" data-mangaid="{{ manga["mhash"] }}">
+    <div class="cover" data-current="{{ 1 }}" style="background-image: url('/m/{{ manga["mhash"] }}/c/{{ 1 }}')"
+         data-covers="{{ manga["covers"] }}"></div>
+    <div class="delim-block">Информация:</div>
+    <div class="details">
+        <p><span>Томов:</span> {{ manga["volumes"] }} </p>
+        <p><span>Состояние:</span> {{ manga["state"] }} </p>
+        <p><span>Перевод:</span> {{ manga["translation"] }} </p>
+
+        {% if len(manga["translators"]) > 1 %}
+        <p><span>Переводчики:</span> {{ ", ".join(manga["translators"]) }} </p>
+        {% else %}
+        <p><span>Переводчик:</span> {{ ", ".join(manga["translators"]) }} </p>
+        {% end %}
+
+        <p><span>Жанры:</span> {{ ", ".join(manga["genres"]) }} </p>
+
+        {% if len(manga["authors"]) > 1 %}
+        <p><span>Авторы:</span> {{ ", ".join(manga["authors"]) }} </p>
+        {% else %}
+        <p><span>Автор:</span> {{ ", ".join(manga["authors"]) }} </p>
+        {% end %}
+
+        <p><span>Год выпуска:</span> {{ manga["year"] }} </p>
+
+        <p>
+            <span>Загружено с:</span>
+            <a href="{{ manga["url"] }}" target="_blank">{{ manga["resource"] }}</a>
+        </p>
+    </div>
+    <div class="delim-block">Описание:</div>
+    <div class="description">{{ manga["description"] }}</div>
+    <div class="delim-block">Все главы манги:</div>
+    <div class="chaptlist">
+      {% for chapt in manga["chapters"] %}
+        <div {% if chapt["readed"] == chapt["pages"] %} class="readed_chapter" {% end %}
+
+            title="{{ chapt["chapter"] }}" data-chaptid="{{ chapt["chash"] }}" data-index="{{ chapt["index"] }}">
+
+          {{ chapt["chapter"] }}
+
+            {% if chapt["readed"] != chapt["pages"] and chapt["readed"] > 0 %}
+                <span class="viewer_chapts_reading">{{ chapt["readed"] }} / {{ chapt["pages"] }}</span>
+            {% elif not chapt["readed"] %}
+                <span class="viewer_chapt_pnum">{{ chapt["pages"] }}</span>
+            {% end %}
+
+        </div>
+      {% end %}
+    </div>
+    <div class="delim-block"></div>
+</div>
+{% end %}
+
+{% block client-teplates %}
+<script type="text/template" id="template-chapter">
+    <div id="chapter-view">
+        <div class="chapt-blur" style="background-image: url('/r/{mhash}/{chash}')"></div>
+        <div class="chapter-controls">
+            <div class="icon-buttons">
+                <span data-action="close" title="Закрыть главу"></span>
+            </div>
+        </div>
+        <div class="chapt-flexbox"></div>
+    </div>
+</script>
+
+<script type="text/template" id="template-thumbnail">
+    <div class="chapt-thumb" data-image="{image}" style="background-image: url('/t/{mhash}/{chash}/{image}')"></div>
+</script>
+
+<script type="text/template" id="template-page">
+    <div class="manga-page">
+        <div class="manga-page-close"></div>
+        <img src="{src}">
+    </div>
+</script>
+
+<script type="text/template" id="template-coverlist">
+    <div class="covers-list">
+        <div class="covers-arrow-left"></div>
+        <div class="covers-text">{text}</div>
+        <div class="covers-arrow-right"></div>
+    </div>
+</script>
+{% end %}
+

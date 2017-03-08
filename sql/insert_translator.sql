@@ -1,0 +1,1 @@
+INSERT OR IGNORE INTO translators (value) VALUES (:translator)

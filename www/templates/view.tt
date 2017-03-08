@@ -1,0 +1,125 @@
+{% extends "base.tt" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/notify.css") }}">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/view.css") }}">
+{% end %}
+
+{% block javascript %}
+<!-- Локальные Джаба скрибты -->
+
+<script src="{{ static_url("javascript/jszip.min.js") }}"></script>
+<script src="{{ static_url("javascript/jszip-utils.min.js") }}"></script>
+
+<script src="{{ static_url("javascript/jquery-ui.min.js") }}"></script>
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
+<script src="{{ static_url("javascript/base64.js") }}"></script>
+<script src="{{ static_url("javascript/notify.js") }}"></script>
+<script src="{{ static_url("javascript/hash.js") }}"></script>
+<script src="{{ static_url("javascript/zk2.js") }}"></script>
+<script src="{{ static_url("javascript/view.js") }}"></script>
+{% end %}
+
+{% block body %}
+<div id="controls">
+    <div class="icon-buttons">
+        <a href="/" data-href="index"></a>
+        <a href="/search" data-href="search"></a>
+    </div>
+    <div class="manga-title"><span>Манга: </span>{{ manga["title"] }}</div>
+</div>
+
+<div class="wrapper">
+  <div id="article" data-mangaid="{{ manga["mhash"] }}">
+    <div class="info">
+      <div class="cover" data-current="{{ 1 }}"
+           style="background-image: url('/m/{{ manga["mhash"] }}/c/{{ 1 }}')"
+           data-covers="{{ manga["covers"] }}"></div>
+      <div class="details">
+        <ul>
+          <li><span>Томов:</span> {{ manga["volumes"] }} </li>
+          <li><span>Состояние:</span> {{ manga["state"] }} </li>
+          <li><span>Перевод:</span> {{ manga["translation"] }} </li>
+
+          {% if len(manga["translators"]) > 1 %}
+            <li><span>Переводчики:</span> {{ ", ".join(manga["translators"]) }} </li>
+          {% else %}
+            <li><span>Переводчик:</span> {{ ", ".join(manga["translators"]) }} </li>
+          {% end %}
+
+          <li><span>Жанры:</span> {{ ", ".join(manga["genres"]) }} </li>
+
+          {% if len(manga["authors"]) > 1 %}
+            <li><span>Авторы:</span> {{ ", ".join(manga["authors"]) }} </li>
+          {% else %}
+            <li><span>Автор:</span> {{ ", ".join(manga["authors"]) }} </li>
+          {% end %}
+
+          <li><span>Год выпуска:</span> {{ manga["year"] }} </li>
+
+          <li>
+            <span>Загружено с:</span>
+            <a href="{{ manga["url"] }}" target="_blank">{{ manga["resource"] }}</a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+    <div class="chapttext">Описание:</div>
+    <div class="description">{{ manga["description"] }}</div>
+    <div class="chapttext">Все главы манги:</div>
+
+    <div class="chaptlist">
+      {% for chapt in manga["chapters"] %}
+        <div {% if chapt["readed"] == chapt["pages"] %} class="readed_chapter" {% end %}
+
+            title="{{ chapt["chapter"] }}" data-chaptid="{{ chapt["chash"] }}" data-index="{{ chapt["index"] }}">
+
+          {{ chapt["chapter"] }}
+
+            {% if chapt["readed"] != chapt["pages"] and chapt["readed"] > 0 %}
+                <span class="viewer_chapts_reading">{{ chapt["readed"] }} / {{ chapt["pages"] }}</span>
+            {% elif not chapt["readed"] %}
+                <span class="viewer_chapt_pnum">{{ chapt["pages"] }}</span>
+            {% end %}
+
+        </div>
+      {% end %}
+    </div>
+
+    <div class="article-end"></div>
+  </div>
+</div>
+{% end %}
+
+{% block client-teplates %}
+<script type="text/template" id="template-chapter">
+    <div id="chapt-view">
+        <div class="chapt-blur" style="background-image: url('/r/{mhash}/{chash}')"></div>
+        <div class="chapt-flexbox"></div>
+    </div>
+</script>
+
+<script type="text/template" id="template-thumbnail">
+    <div class="chapt-thumb" data-image="{image}" style="background-image: url('/t/{mhash}/{chash}/{image}')"></div>
+</script>
+
+<script type="text/template" id="template-zt">
+    <div class="chapt-thumb" data-image="{image}" style="background-image: url({blob})"></div>
+</script>
+
+<script type="text/template" id="template-page">
+    <div class="manga-page">
+        <img src="{src}">
+    </div>
+</script>
+
+<script type="text/template" id="template-coverlist">
+    <div class="covers-list">
+        <div class="covers-arrow-left"></div>
+        <div class="covers-text">{text}</div>
+        <div class="covers-arrow-right"></div>
+    </div>
+</script>
+{% end %}
+

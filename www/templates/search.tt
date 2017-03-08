@@ -1,0 +1,39 @@
+{% extends "base.tt" %}
+
+{% block style %}
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/notify.css") }}">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/search.css") }}">
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url("javascript/notify.js") }}"></script>
+<script src="{{ static_url("javascript/base64.js") }}"></script>
+<script src="{{ static_url("javascript/search.js") }}"></script>
+{% end %}
+
+{% block body %}
+<div id="controls">
+    <div class="icon-buttons">
+        <a href="/" data-action="index" title="На главную"></a>
+    </div>
+</div>
+<div class="main">
+    <div class="searchform">
+        <div class="search">
+            <input type="text" placeholder="search..." />
+        </div>
+        <div class="filters">
+            {% if search["genres"] %}
+                <div class="genres">
+                    {% for genre in search["genres"] %}
+                        <span data-id="{{ genre["id"] }}">{{ genre["value"] }}</span>
+                    {% end %}
+                </div>
+            {% end %}
+        </div>
+        <div class="find"><input type="button" value="Откопать" /></div>
+    </div>
+</div>
+
+{% end %}

@@ -1,0 +1,1 @@
+INSERT OR IGNORE INTO upload_queue (uiid, url, uhash) VALUES (?, ? ,?)

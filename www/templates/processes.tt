@@ -1,0 +1,26 @@
+{% extends "base.tt" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/notify.css") }}">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/processes.css") }}">
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url("javascript/notify.js") }}"></script>
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
+<script src="{{ static_url("javascript/processes.js") }}"></script>
+{% end %}
+
+{% block body %}
+<div id="controls">
+
+</div>
+<div id="main">
+    <div class="process-list-head"></div>
+    <table class="process-list"></table>
+</div>
+{% end %}
+
+{% block client-teplates %}
+
+{% end %}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="icon" type="image/png" href="{{ static_url("images/favicons/3.png") }}">
+
+    <!-- Глобальные стили -->
+    <link rel="stylesheet" type="text/css" href="{{ static_url("style/normalize.min.css") }}">
+
+    {% block style %}
+        <!-- Наследуемые шаблоном стили -->
+    {% end %}
+
+    <title>{{ title }}</title>
+</head>
+<body>
+
+{% block body %}
+    <!-- Наследуемое тело страницы -->
+{% end %}
+
+<!-- Глобальные javascript`ы -->
+<script src="{{ static_url("javascript/jquery-3.1.1.min.js") }}"></script>
+<script src="{{ static_url("javascript/cookies.js") }}"></script>
+
+{% block javascript %}
+    <!-- Наследуемые шаблоном javascript`ы -->
+{% end %}
+
+{% block client-teplates %}
+    <!-- Наследуемые шаблоном клиентские шаблоны -->
+{% end %}
+
+</body>
+</html>

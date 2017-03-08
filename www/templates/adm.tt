@@ -1,0 +1,43 @@
+{% extends "base.tt" %}
+
+{% block style %}
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/notify.css") }}">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/adm.css") }}">
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url("javascript/notify.js") }}"></script>
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
+<script src="{{ static_url("javascript/adm.js") }}"></script>
+{% end %}
+
+{% block body %}
+<div id="controls">
+    <ul>
+        <li data-action="main" title="На главную" data-href="/"></li>
+    </ul>
+</div>
+<div id="main">
+    <div class="wait-add action-square">
+        <div class="action-square-title">Очередь загружаемой манги</div>
+        <a href="/uqueue"></a>
+    </div>
+    <div class="action-square user-control">
+        <div class="action-square-title">Управление пользователями</div>
+        <a href="/users"></a>
+    </div>
+    <div class="action-square task-manager">
+        <div class="action-square-title">Задачи сервера</div>
+        <a href="/processes"></a>
+    </div>
+    <div class="action-square settings-manager">
+        <div class="action-square-title">Настройки сервера</div>
+        <a href="/settings"></a>
+    </div>
+</div>
+{% end %}
+
+{% block client-teplates %}
+
+{% end %}

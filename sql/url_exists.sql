@@ -1,0 +1,1 @@
+SELECT * FROM upload_queue WHERE `uhash` == :hash LIMIT 1
