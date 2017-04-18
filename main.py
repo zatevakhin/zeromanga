@@ -38,7 +38,7 @@ class ZeroMangaApplication(object):
         if type(settings) == dict:
             self.__settings.update(settings)
         else:
-            raise AssertionError("Handler must be dict!")
+            raise AssertionError("Setting must be dict!")
 
     def main(self):
         application = web.Application(self.__handlers, **self.__settings)
