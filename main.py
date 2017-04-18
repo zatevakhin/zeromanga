@@ -78,16 +78,16 @@ zmApp.add_handle((r'^/r/([a-f0-9]{40})/([a-f0-9]{32})$', RandomPage, {"data": da
 zmApp.add_handle((r'^/m/([a-f0-9]{40})/c/([0-9]+)$', Covers, {"data": data}))
 zmApp.add_handle((r'^/manga/([a-f0-9]{40})$', View, {"data": data}))
 
-zmApp.add_handle((r'^/wsapi', WebsocketAPI, {"data": data}))
+zmApp.add_handle((r'^/wsapi$', WebsocketAPI, {"data": data}))
 
 # Admin area handlers
-zmApp.add_handle((r'^/adm',       AdminArea, {"data": data}))
-zmApp.add_handle((r'^/processes', Processes, {"data": data}))
+zmApp.add_handle((r'^/adm$',       AdminArea, {"data": data}))
+zmApp.add_handle((r'^/processes$', Processes, {"data": data}))
 zmApp.add_handle((r'^/uqueue$',   UploadQueue, {"data": data}))
 
 
 zmApp.add_handle((r'^/profile$', Profile,     {"data": data}))
-zmApp.add_handle((r'^/search',   Search,      {"data": data}))
+zmApp.add_handle((r'^/search$',   Search,      {"data": data}))
 zmApp.add_handle((r'^/login$',   Login,       {"data": data}))
 zmApp.add_handle((r'^/$',        Index,       {"data": data}))
 
