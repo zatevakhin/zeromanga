@@ -2,24 +2,22 @@
 
 {% block style %}
 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="stylesheet" type="text/css" href="{{ static_url("style/notify.css") }}">
 <link rel="stylesheet" type="text/css" href="{{ static_url("style/profile.css") }}">
 {% end %}
 
 {% block javascript %}
-<script src="{{ static_url("javascript/notify.js") }}"></script>
-<script src="{{ static_url("javascript/zk2.js") }}"></script>
 <script src="{{ static_url("javascript/profile.js") }}"></script>
 {% end %}
 
 {% block body %}
-<div id="controls">
-    <div class="icon-buttons">
-        <a href="/" data-action="index" title="На главную"></a>
-        <a href="/search" data-action="search" title="Поиск / Фильтры"></a>
-        <span data-action="add" title="Добавить ссылку на мангу"></span>
-        <a href="/logout" data-action="logout" title="Выйти"></a>
-        <a href="/adm" data-action="adm" title="Админ панель"></a>
+<div class="nav">
+    <div class="nav__buttons">
+        <a href="/" class="nav__logo" title="На главную"></a>
+        <a href="/search" class="fa fa-search" title="Поиск / Фильтры"></a>
+        <a href="/logout" class="fa fa-sign-out" title="Выйти"></a>
+        {% if is_allowed_access %}
+            <a href="/adm" class="fa fa-server" title="Админ панель"></a>
+        {% end %}
     </div>
 </div>
 

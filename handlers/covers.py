@@ -1,40 +1,26 @@
 # -*- coding: utf-8 -*-
 
-import tornado.web as web
+from core import BaseRequestHandler
+from core import MangaItem
 import os
 
 
-class Covers(web.RequestHandler):
+class Covers(BaseRequestHandler):
 
-    def __init__(self, application, request, **kwargs):
-        super(Covers, self).__init__(application, request)
-        data = kwargs.get("data", {})
+    def initialize(self, data):
         self.db = data.get("db",  None)
-        self.manga = data.get("manga",  None)
-        self.mangastorage = data.get("manga-storage")
+        self.storage = data.get("storage")
 
     def get(self, mangaid, coverid):
+        mitem = MangaItem(self.db, mangaid)
 
-        manga = self.manga.get_manga_by_hash(mangaid)
-
-        if not manga:
+        if not mitem.manga:
             self.send_error(404)
             return
 
-        coverp = os.path.join(self.mangastorage, manga["path"], ".meta", "c", "{}.png".format(coverid))
-
+        coverp = os.path.join(self.storage, mitem.path, ".meta", "c", "{}.png".format(coverid))
         if not os.path.exists(coverp):
             self.send_error(404)
             return
 
-        file_sz = os.path.getsize(coverp)
-        self.set_header('Content-Type', 'image/png')
-        self.set_header('Content-Length', file_sz)
-
-        with open(coverp, 'rb') as f:
-            while True:
-                data = f.read(4096)
-                if not data:
-                    break
-                self.write(data)
-        self.finish()
+        self.writef(coverp, "image/png")

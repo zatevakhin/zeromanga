@@ -1,0 +1,67 @@
+{% extends "base.tt" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/notify.css") }}">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/mupload.css") }}">
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url("javascript/notify.js") }}"></script>
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
+<script src="{{ static_url("javascript/zk2.js") }}"></script>
+<script src="{{ static_url("javascript/mupload.js") }}"></script>
+{% end %}
+
+{% block body %}
+
+<div class="nav">
+    <div class="nav__buttons">
+        <a href="/" class="nav__logo" title="На главную"></a>
+        <a href="/adm" class="fa fa-server" title="Админ панель"></a>
+        <span data-action="add" class="fa fa-plus" title="Добавить ссылку на мангу"></span>
+    </div>
+</div>
+
+<div id="main" data-resources="{{ resources }}">
+
+  <table>
+    <tbody>
+
+    {% set index = 1 %}
+    {% for qmanga in mqueued %}
+
+        <tr class="manga-for-mod"  data-uid="{{ qmanga["uiid"] }}"  data-uhash="{{ qmanga["uhash"] }}" data-index="{{ index }}">
+          <td class="index">{{ index }}</td>
+          <td class="name"><span class="fa fa-user-o"></span>{{ qmanga["login"] }}</td>
+          <td class="url">
+              <a href="{{ qmanga["url"] }}"><span class="fa fa-link"></span>{{ qmanga["url"] }}</a>
+          </td>
+            <td data-action="manga-upload"><span class="fa fa-download"></span>Загрузить</td>
+            <td data-action="manga-remove"><span class="fa fa-remove"></span>Удалить</td>
+        </tr>
+      {% set index += 1 %}
+
+    {% end %}
+    </tbody>
+  </table>
+</div>
+
+{% end %}
+
+{% block client-teplates %}
+
+<script type="text/template" id="template-upload">
+<div class="popup" title="Press ESC to close popup.">
+    <div class="popup-centred" title="">
+        <h4>Добавление манги</h4>
+        <input type="text" name="url" placeholder="Input manga url">
+        <div>{text}</div>
+        <ul class="resources">{resources}</ul>
+        <input type="button" value="Отмена" data-popup="cancel">
+        <input type="button" value="Добавить" data-popup="execute">
+    </div>
+</div>
+</script>
+{% end %}
+
+

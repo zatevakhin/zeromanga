@@ -1,0 +1,79 @@
+#main {
+}
+
+#main table {
+    max-width: 50%;
+    width: 50%;
+    min-width: 300px;
+    margin: 0 auto;
+}
+
+#main table thead {
+    background: #111111;
+    height: 32px;
+}
+
+#main table tbody tr {
+  background: #222222;
+}
+#main table tbody tr:nth-child(even) {
+  background: #2a2a2a;
+}
+
+
+#popup-main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 2;
+}
+
+#popup-main .popup-centred {
+    border: 1px solid rgba(30, 144, 255, .1);
+    background-color: #101010;
+    display: inline-block;
+    font-size: 10px;
+    min-height: 150px;
+    min-width: 250px;
+    max-width: 300px;
+    margin-left: 10px;
+    margin-top: 10px;
+    position: relative;
+    padding: 10px;
+}
+
+#popup-main .popup-centred input[type=text] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid rgba(30, 144, 255, .1);
+    margin-bottom: 5px;
+}
+
+#popup-main .popup-centred select {
+    position: relative;
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 0;
+    border: 1px solid rgba(30, 144, 255, .1);
+}
+
+#popup-main .action-cancel {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+#popup-main .action-send {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}

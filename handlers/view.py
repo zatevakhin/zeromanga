@@ -1,73 +1,35 @@
 # -*- coding: utf-8 -*-
 
-from urllib.parse import urlparse
+from core import BaseRequestHandler
 from core.database import Base
-import tornado.web as web
+
+from core import MangaItem
 import re
 
-class View(web.RequestHandler):
 
-    def __init__(self, application, request, **kwargs):
-        super(View, self).__init__(application, request)
-        data = kwargs.get("data", {})
-        self.db = data.get("db", None)
-        self.manga = data.get("manga", None)
-        self.users = data.get("users", None)
+class View(BaseRequestHandler):
 
-    def get_usercookie(self):
-        cookie = self.get_secure_cookie("dfsid", None)
-        if not cookie:
-            return
-
-        return cookie.decode()
-
-    def get_userdata(self):
-        cookie = self.get_usercookie()
-
-        if not cookie:
-            return
-
-        user = self.users.get_by_cookie(cookie)
-
-        if not user:
-            return
-
-        return user
+    def initialize(self, data):
+        super(View, self).initialize(**data)
+        self.db = data.get("db", None)  # type: Base
 
     def get(self, mangaid):
-
-        manga = self.manga.get_manga_full(mangaid)
-
-        manga["resource"] = urlparse(manga["url"]).netloc
-
-        manga["chapters"].sort(key=(lambda x: x['index']))
+        miteme = MangaItem(self.db, mangaid)
 
         user = self.get_userdata()
 
-        if user:
-
-            with self.db.connect() as connection:
-
-                c = connection.cursor()
-
-                for chapter in manga["chapters"]:
-                    # TODO: сделать подсчет прочитаных на стороне бд.
-                    items = c.execute(Base.source("sql/select_readed.sql"), {
-                        "ciid": chapter['id'],
-                        "miid": manga['id'],
-                        "uiid": user['id']
-                    }).fetchall()
-
-                    chapter["readed"] = len(items)
-        else:
-            self.clear_cookie("dfsid")
-
         ua = self.request.headers["user-agent"]
         if re.search("(android)", ua, re.I):
-            self.render("view.mobile.tt", manga=manga, title=manga["title"])
-        else:
-            self.render("view.tt", manga=manga, title=manga["title"])
+            self.render("view.mobile.tt", manga=miteme, user=user, title=miteme.title)
+            return
 
+        self.render(
+            "view.tt",
+            manga=miteme,
+            user=user,
+            title=miteme.title,
+            is_allowed_access = self.allowed_access(["admins"]),
+        )
 
     def post(self, mangaid):
 
@@ -76,20 +38,13 @@ class View(web.RequestHandler):
         if action in ["get.thumbnails"]:
             chash = self.get_argument("chash", None)
 
-            chapter = self.manga.get_manga_chapt(mangaid, chash)
+            miteme = MangaItem(self.db, mangaid)
+            chapter = miteme.get_chapter(chash)
 
             user = self.get_userdata()
 
             if user:
-                with self.db.connect() as connection:
-                    c = connection.cursor()
-                    items = c.execute(Base.source("sql/select_readed.sql"), {
-                        "miid": chapter['mangaid'],
-                        "ciid": chapter['id'],
-                        "uiid": user['id']
-                    }).fetchall()
-
-                    chapter["readed"] = [item['pageid'] for item in items]
+                chapter["readed"] = miteme.get_readed(chapter["id"], user["id"])
             else:
                 self.clear_cookie("dfsid")
 

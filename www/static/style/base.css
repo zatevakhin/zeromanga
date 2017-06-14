@@ -1,0 +1,120 @@
+*, *::before, *::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: #1F1F1F;
+    font-family: "Droid Sans", "Dejavu Sans";
+    color: #A6A6A6;
+    overflow: hidden;
+}
+
+/* navigation and controls */
+.nav {
+    background: black;
+    height: 33px;
+    width: 100%;
+    border-bottom: 1px solid #195C9D;
+}
+
+.nav::before {
+    content: "";
+
+    position: fixed;
+    z-index: 1;
+    top: 33px;
+    left: 0;
+
+    width: 100%;
+    height: 13px;
+
+    background: linear-gradient(to top, transparent, rgba(0, 0, 0, 0.3));
+}
+
+.nav__pagination {
+    position: relative;
+    margin: 0;
+    height: 32px;
+    text-align: center;
+    display: inline-block;
+
+    float: right;
+    padding: 0 30px 0 0;
+    line-height: 32px;
+}
+
+.nav__pagination a {
+    text-decoration: none;
+    padding-left: 1px;
+    padding-right: 1px;
+    color: #333333;
+    font-weight: bold;
+    margin: 0;
+    outline: none;
+}
+
+.nav__pagination span {
+    color: #777777;
+    font-weight: bold;
+}
+
+.nav__buttons {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    float: left;
+    height: 32px;
+}
+
+.nav__buttons a, .nav__buttons span {
+    display: inline-block;
+
+    background: transparent no-repeat center center;
+
+    padding: 0;
+    margin: 0;
+
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+
+    float: left;
+    outline: none;
+
+    font-size: 24px;
+    line-height: 32px;
+    text-decoration: none;
+    text-align: center;
+    color: #333333;
+    transition: all .05s ease-in-out;
+}
+
+.nav__buttons span.nav__delimiter {
+    display: inline-block;
+    width: 1px;
+    height: 24px;
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top:4px;
+    margin-bottom: 4px;
+    background: #222222;
+    cursor: default;
+    float: left;
+    position: relative;
+}
+
+.nav__buttons a:hover, .nav__buttons span:hover {
+    font-size: 26px;
+}
+
+.nav__buttons a.nav__logo, .nav__buttons span.nav__logo {
+    background-image: url(/static/images/logo.svg);
+    background-size: auto 24px;
+    width: 120px;
+}

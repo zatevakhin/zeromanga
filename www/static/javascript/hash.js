@@ -29,7 +29,12 @@ let Hash = {
 
     get: function (key) {
         let hash = this.parse();
-        return hash[key];
+        
+        if (key && key instanceof String) {
+            return hash[key];
+        }
+
+        return hash;
     },
 
     set: function(obj) {

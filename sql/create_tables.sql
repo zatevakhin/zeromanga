@@ -2,15 +2,17 @@
 
 CREATE TABLE IF NOT EXISTS `users` (
       `id`     INTEGER      PRIMARY KEY NOT NULL,
-
       `uhid`   CHAR(40)     UNIQUE      NOT NULL,
-
-      `login`  VARCHAR(16)              NOT NULL,
-
+      `login`  VARCHAR(16)  UNIQUE      NOT NULL,
       `passwd` VARCHAR(128)             NOT NULL,
+      `group_id` INTEGER                NOT NULL,
 
-      -- User access level
-      `access` TEXT                     NOT NULL
+      FOREIGN KEY (group_id) REFERENCES groups(id)
+);
+
+CREATE TABLE IF NOT EXISTS groups (
+  id   INTEGER PRIMARY KEY NOT NULL,
+  name VARCHAR(16) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `authorized` (
@@ -25,14 +27,11 @@ CREATE TABLE IF NOT EXISTS `authorized` (
 
 CREATE TABLE IF NOT EXISTS `upload_queue` (
   `id`   INTEGER PRIMARY KEY         NOT NULL,
-
   -- User Integer ID
   `uiid`  INTEGER                    NOT NULL,
-
   `url`   TEXT                       NOT NULL,
   -- URL hash id
   `uhash` CHAR(40) UNIQUE            NOT NULL,
-
   `stamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   FOREIGN KEY (uiid) REFERENCES users(id)
@@ -70,15 +69,17 @@ CREATE TABLE IF NOT EXISTS manga (
   id          INTEGER PRIMARY KEY NOT NULL,
   mhash       CHAR(40) UNIQUE     NOT NULL,
   url         TEXT                NOT NULL,
-  title       TEXT                NOT NULL,
-  path        TEXT                NOT NULL,
-  description TEXT                NOT NULL,
+  resource    TEXT                NOT NULL,
+  name        TEXT                        ,
+  english     TEXT                        ,
+  original    TEXT                        ,
+  description TEXT                        ,
   covers      INTEGER             NOT NULL,
-  year        INTEGER             NOT NULL,
   volumes     INTEGER             NOT NULL,
   chapters    INTEGER             NOT NULL,
   mature      TINYINT             NOT NULL,
   single      TINYINT             NOT NULL,
+  year        VARCHAR(32)         NOT NULL,
   translation VARCHAR(64)         NOT NULL,
   state       VARCHAR(64),
   rating      VARCHAR(32)

@@ -1,152 +1,73 @@
-*, *::before, *::after {
-  -webkit-box-sizing: border-box;
-  -khtml-box-sizing:  border-box;
-  -moz-box-sizing:    border-box;
-  -ms-box-sizing:     border-box;
-  -o-box-sizing:      border-box;
-  box-sizing:         border-box;
-}
-
-html, body {
-  height: 100%;
-}
-
-body {
-  font-family: "Droid Sans", "Dejavu Sans","Arial","Consolas";
-  background:  #1F1F1F;
-  overflow:    hidden;
-  color:       #A6A6A6;
-  /*height:100%;*/
-}
-
-#controls {
-  border-bottom: 1px solid #195C9D;
-  box-shadow:    0px 5px 10px 0px rgba(0,0,0,0.5);
-  background:    black;
-  height:        33px;
-  width:         100%;
-}
-
-#controls ul {
-  display: inline-block;
-
-  padding: 0;
-  margin:  0;
-  float:   left;
-  height:  32px;
-}
-
-#controls li {
-  position: relative;
-  display:  inline-block;
-
-  background-color:    transparent;
-  background-size:     24px 24px;
-  background-position: center center;
-  background-repeat:   no-repeat;
-
-  list-style: none;
-
-  padding:0;
-  margin: 0;
-
-  height: 32px;
-  width:  32px;
-
-  transition: background-image .2s ease-in-out;
-  cursor:     pointer;
-
-  float: left;
-}
-
-#controls li[data-action=main] {
-  background-image: url("/static/images/actions/main.svg");
-}
-
-#controls li[data-action]:hover {
-  background-size: 26px 26px;
-}
-
-
 #main {
-  overflow-y: auto;
-  position:   relative;
-  width:      100%;
-  height:     100%;
-  height:     calc(100% - 33px);
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+    overflow-y: auto;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    height: calc(100% - 33px);
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 
 }
 
 #main div.action-square {
-  background-color: #101010;
-  display:          inline-block;
-  font-size:        10px;
-  height:           200px;
-  margin-left:      10px;
-  margin-top:       10px;
-  position:         relative;
-  width:            200px;
-  box-shadow:       0px 2px 5px 0px rgba(0,0,0,0.5);
-  // cursor:           pointer;
-  /*background:  rgba(0,0,0,.5);*/
-
-  // float: left;
+    background-color: #101010;
+    display: inline-block;
+    font-size: 10px;
+    height: 200px;
+    margin-left: 10px;
+    margin-top: 10px;
+    position: relative;
+    width: 200px;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
 }
 
 #main div.action-square a {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  display: block;
-  width: 32px;
-  height: 32px;
-
-  background-image: url("/static/images/actions/next.svg");
-
-  background-size:     24px 24px;
-  background-position: center center;
-  background-repeat:   no-repeat;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    font-size: 24px;
+    text-decoration: none;
+    color: dodgerblue;
 }
 
 #main div.action-square a:hover {
-  background-size: 26px 26px;
+    background-size: 26px 26px;
 }
 
 #main div.action-square-title {
-  font-weight: bold;
-  text-align:  center;
-  position:    relative;
-  padding:     5px;
+    font-weight: bold;
+    text-align: center;
+    position: relative;
+    padding: 5px;
+    color: black;
 }
 
 #main div.wait-add {
 }
 
 #main div.wait-add ul {
-  list-style: none;
-  /*border: 1px solid red;*/
+    list-style: none;
 }
 
 #main div.wait-add div.action-square-title {
-  background: #388E3C;
-  color:      black;
+    background: #388E3C;
 }
 
 #main div.user-control div.action-square-title {
-  background: #D32F2F;
-  color:      black;
+    background: #D32F2F;
 }
 
 #main div.task-manager div.action-square-title {
-  background: #00796B;
-  color:      black;
+    background: #00796B;
 }
 
 #main div.settings-manager div.action-square-title {
-  background: #455A64;
-  color:      black;
+    background: #455A64
 }

@@ -1,33 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from tornado import template
-from tornado import web
 import logging
 
-class User(object):
-
-    def __init__(self, login, passwd, ip, cookie):
-        self.cookie = cookie
-        self.passwd = passwd
-        self.login = login
-        self.ip = ip
+from core import BaseRequestHandler
 
 
-class Login(web.RequestHandler):
-
-    def __init__(self, application, request, **kwargs):
-        super(Login, self).__init__(application, request)
-
-        data = kwargs.get("data", {})
-        self.db = data.get("db", None)
-        self.users = data.get("users", None)
+class Login(BaseRequestHandler):
+    def initialize(self, data):
+        super(Login, self).initialize(**data)
 
     def get(self):
         logging.info("Request[%s] from '%s' to '%s'", "get", self.request.remote_ip, "login")
 
-        cookie = self.get_secure_cookie("dfsid", None)
-
-        if cookie and self.users.get_by_cookie(cookie.decode()):
+        if self.get_current_user():
             self.redirect('/profile')
             return
 
@@ -36,25 +21,30 @@ class Login(web.RequestHandler):
     def post(self):
         logging.info("Request[%s] from '%s' to '%s'", "post", self.request.remote_ip, "login")
 
-        login = self.get_argument("xloginx", None)
-        passw = self.get_argument("xpasswx", None)
+        login = self.get_argument("zm_login", None)
+        passwd = self.get_argument("zm_passwd", None)
 
-        logging.info("Login with '%s:%s' from '%s' ip address", login, passw, self.request.remote_ip)
+        logging.info("Login with '%s:%s' from '%s' ip address", login, passwd, self.request.remote_ip)
 
-        if not (login or passw):
-            self.set_cookie("ecode", "0x01")
+        if not login:
+            self.set_cookie("code", "E1")
             self.redirect("/login")
             return
 
-        userrow = self.users.get_by_id(self.users.make_authorization_hash(login, passw))
-        if not userrow:
-            self.set_cookie("ecode", "0x02")
+        if not passwd:
+            self.set_cookie("code", "E2")
             self.redirect("/login")
             return
 
-        cookie = self.users.make_cookie_hash(login, passw, self.request.remote_ip)
+        user = self.users.get_by_id(self.users.make_authorization_hash(login, passwd))
+        if not user:
+            self.set_cookie("code", "E3")
+            self.redirect("/login")
+            return
 
-        self.users.authorize(userrow["id"], cookie, self.request.remote_ip)
+        cookie = self.users.make_cookie_hash(login, passwd, self.request.remote_ip)
+
+        self.users.authorize(user["id"], cookie, self.request.remote_ip)
 
         self.set_secure_cookie("dfsid", cookie)
 

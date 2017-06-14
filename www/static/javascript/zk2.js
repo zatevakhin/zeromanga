@@ -8,24 +8,28 @@ let zk = {
     backup_listeners: {},
     keydown_timeout: null,
 
-    bind: function (name) {
-        let listener = this.backup_listeners[name];
-        this.active_listeners[listener.key] = listener.func;
+    bind: function () {
+        Array.from(arguments).map((e) => {
+            let listener = this.backup_listeners[e];
+            this.active_listeners[listener.key] = listener.func;
+        });
     },
 
-    unbind: function (keybind) {
-        delete this.active_listeners[keybind];
+    unbind: function () {
+        Array.from(arguments).map((e) => {
+            delete this.active_listeners[e];
+        });
     },
 
-    set: function (name, obj) {
-        this.backup_listeners[name] = obj;
+    set: function (name, key, func) {
+        this.backup_listeners[name] = {key: key, func: func};
     },
 
     get: function (name) {
         return this.backup_listeners[name];
     },
 
-    del: function (key) {
+    remove: function (key) {
         delete this.active_listeners[key];
 
         for (let i in this.backup_listeners) {
@@ -39,22 +43,20 @@ let zk = {
     },
 
     listen: function ( ) {
-        let self = this;
-        document.addEventListener("keydown", function (e) {
+        document.addEventListener("keydown", (e) => {
             console.debug(e);
             let k = e.key.toLowerCase();
 
-            if (self.active_listeners[k]) {
-                if (self.keydown_timeout) {
-                    clearTimeout(self.keydown_timeout);
+            if (this.active_listeners[k]) {
+                if (this.keydown_timeout) {
+                    clearTimeout(this.keydown_timeout);
                 }
 
-                self.keydown_timeout = setTimeout(function () {
-                    self.active_listeners[k](e);
+                this.keydown_timeout = setTimeout(() => {
+                    this.active_listeners[k](e);
                 }, 200);
             }
             return false;
         });
-
     }
 };

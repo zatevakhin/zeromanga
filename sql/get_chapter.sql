@@ -1,5 +1,6 @@
-SELECT chapters.*, manga.path as path FROM chapters
-  JOIN manga ON chapters.mangaid = manga.id
+SELECT c.*, m.resource AS resource FROM
+  chapters AS c JOIN
+  manga AS m ON c.mangaid = m.id
 WHERE
   mhash = :mhash AND
   chash = :chash

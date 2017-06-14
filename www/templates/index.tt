@@ -7,43 +7,61 @@
 {% end %}
 
 {% block javascript %}
-<script src="{{ static_url("javascript/notify.js") }}"></script>
 <script src="{{ static_url("javascript/auxiliary.js") }}"></script>
 <script src="{{ static_url("javascript/hash.js") }}"></script>
+<script src="{{ static_url("javascript/zk2.js") }}"></script>
 <script src="{{ static_url("javascript/index.js") }}"></script>
 {% end %}
 
 {% block body %}
-<div id="controls">
-    <div class="icon-buttons">
-        <a href="/search" data-action="search" title="Поиск / Фильтры"></a>
+<div class="nav">
+    <div class="nav__buttons">
+        <span class="nav__logo"></span>
+        <a href="/search" class="fa fa-search" title="Поиск / Фильтры"></a>
         {% if is_authorized %}
-            <a href="/profile" data-action="profile" title="Профиль"></a>
-            <a href="/logout" data-action="logout" title="Выйти"></a>
+            <a href="/profile" class="fa fa-id-badge" title="Профиль"></a>
+            <span class="nav__delimiter"></span>
+            <a href="/logout" class="fa fa-sign-out" title="Выйти"></a>
+            {% if is_allowed_access %}
+                <span class="nav__delimiter"></span>
+                <a href="/adm" class="fa fa-server" title="Админ панель"></a>
+            {% end %}
         {% else %}
-            <a href="/login" data-action="login" title="Войти"></a>
+            <a href="/login" class="fa fa-sign-in" title="Войти"></a>
         {% end %}
 
     </div>
-    <div class="pagination"></div>
+    <div class="nav__pagination"></div>
 </div>
-<div id="articles"></div>
+<div class="articles"></div>
 {% end %}
 
 {% block client-teplates %}
-<script type="text/template" id="template-loading">
-<div id="loading"><div>LOADING...</div></div>
+<script type="text/template" id="tt-loading">
+<div class="loading"><div>LOADING...</div></div>
 </script>
 
-<script type="text/template" id="template-article">
-<div class="article" data-mangaid="{mhash}" style="background-image: url({cover});">
-    <div class="article-name">
-        <div class="article-name-glass" style="background-image: url({cover});">
-        </div>
-        <div class="article-name-text" title="{title}">
-            <span>{shorttitle}</span>
-        </div>
-    </div>
-</div>
+<script type="text/template" id="tt-paging-link">
+<a href="#O:{offset}">{page}</a>
+</script>
+
+<script type="text/template" id="tt-paging-span">
+<span>{page}</span>
+</script>
+
+<script type="text/template" id="tt-article">
+<a class="article" href="/manga/{mhash}" style="background-image: url(/m/{mhash}/c/{cover});">
+    <span class="article__states">
+        <span class="fa fa-paint-brush" data-completed="{state}" title="{st_title}"></span>
+        <span class="fa fa-language" data-completed="{translation}" title="{tr_title}"></span>
+    </span>
+    <span class="article__name">
+        <span class="article__name-glass" style="background-image: url(/m/{mhash}/c/{cover});">
+        </span>
+        <span class="article__name-text" title="{title}">
+            <span>{short}</span>
+        </span>
+    </span>
+</a>
 </script>
 {% end %}

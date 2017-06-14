@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
 
-    <link rel="icon" type="image/png" href="{{ static_url("images/favicons/3.png") }}">
+    <link rel="icon" type="image/svg+xml" href="{{ static_url("images/favicon.svg") }}">
 
     <!-- Глобальные стили -->
-    <link rel="stylesheet" type="text/css" href="{{ static_url("style/normalize.min.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ static_url("lib/normalize.min.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ static_url("lib/font-awesome/css/font-awesome.min.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ static_url("style/base.css") }}">
 
     {% block style %}
         <!-- Наследуемые шаблоном стили -->
@@ -21,7 +23,7 @@
 {% end %}
 
 <!-- Глобальные javascript`ы -->
-<script src="{{ static_url("javascript/jquery-3.1.1.min.js") }}"></script>
+<script src="{{ static_url("lib/jquery-3.1.1.min.js") }}"></script>
 <script src="{{ static_url("javascript/cookies.js") }}"></script>
 
 {% block javascript %}

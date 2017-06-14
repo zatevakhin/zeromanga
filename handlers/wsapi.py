@@ -10,13 +10,13 @@ class WebsocketAPI(WebSocketHandler):
         super(WebsocketAPI, self).__init__(application, request)
         self.data = kwargs.get("data", None)
         self.users = self.data["users"]
-        self.mangadownload = self.data["mangadownload"]
+        # self.mangadownload = self.data["mangadownload"]
 
     def collect_process_list(self):
         plist = {}
 
-        for pid, proc in self.mangadownload.PROCESSES.items():
-            plist[pid] = proc
+        # for pid, proc in self.mangadownload.PROCESSES.items():
+        #     plist[pid] = proc
 
         return plist
 

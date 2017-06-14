@@ -8,20 +8,21 @@
 
 {% block javascript %}
 <script src="{{ static_url("javascript/notify.js") }}"></script>
-<script src="{{ static_url("javascript/base64.js") }}"></script>
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
 <script src="{{ static_url("javascript/search.js") }}"></script>
 {% end %}
 
 {% block body %}
-<div id="controls">
-    <div class="icon-buttons">
-        <a href="/" data-action="index" title="На главную"></a>
+<div class="nav">
+    <div class="nav__buttons">
+        <a href="/" class="nav__logo" title="На главную"></a>
     </div>
 </div>
 <div class="main">
     <div class="searchform">
         <div class="search">
             <input type="text" placeholder="search..." />
+            <input type="button" value="Откопать" />
         </div>
         <div class="filters">
             {% if search["genres"] %}
@@ -32,8 +33,22 @@
                 </div>
             {% end %}
         </div>
-        <div class="find"><input type="button" value="Откопать" /></div>
     </div>
+    <div id="found"></div>
 </div>
 
+{% end %}
+
+{% block client-teplates %}
+<script type="text/template" id="template-found">
+<div class="article" data-mangaid="{mhash}" style="background-image: url({cover});">
+    <div class="article-name">
+        <div class="article-name-glass" style="background-image: url({cover});">
+        </div>
+        <div class="article-name-text" title="{title}">
+            <span>{shorttitle}</span>
+        </div>
+    </div>
+</div>
+</script>
 {% end %}

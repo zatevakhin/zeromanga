@@ -1,3 +1,5 @@
 *.sqlite
 *.idea
 *.pyc
+.eslintrc.js
+.vscode

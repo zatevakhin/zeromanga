@@ -13,27 +13,27 @@
 {% end %}
 
 {% block body %}
-<div id="controls">
-    <ul>
-        <li data-action="main" title="На главную" data-href="/"></li>
-    </ul>
+<div class="nav">
+    <div class="nav__buttons">
+        <a href="/" class="nav__logo" title="На главную"></a>
+    </div>
 </div>
 <div id="main">
     <div class="wait-add action-square">
         <div class="action-square-title">Очередь загружаемой манги</div>
-        <a href="/uqueue"></a>
+        <a href="/mupload" class="fa fa-chevron-right"></a>
     </div>
     <div class="action-square user-control">
-        <div class="action-square-title">Управление пользователями</div>
-        <a href="/users"></a>
+        <div class="action-square-title">Пользователи и группы</div>
+        <a href="/users" class="fa fa-chevron-right"></a>
     </div>
     <div class="action-square task-manager">
         <div class="action-square-title">Задачи сервера</div>
-        <a href="/processes"></a>
+        <a href="/processes" class="fa fa-chevron-right"></a>
     </div>
     <div class="action-square settings-manager">
         <div class="action-square-title">Настройки сервера</div>
-        <a href="/settings"></a>
+        <a href="/settings" class="fa fa-chevron-right"></a>
     </div>
 </div>
 {% end %}

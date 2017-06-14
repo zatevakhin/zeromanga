@@ -1,40 +1,22 @@
 # -*- coding: utf-8 -*-
 
-import tornado.web as web
+from core import BaseRequestHandler
+from core import MangaItem
 from core import Base
 import os
 
 
-class Page(web.RequestHandler):
+class Page(BaseRequestHandler):
 
-    def __init__(self, application, request, **kwargs):
-        super(Page, self).__init__(application, request)
-        data = kwargs.get("data", {})
-        self.db = data.get("db",  None)
-        self.manga = data.get("manga",  None)
-        self.users = data.get("users",  None)
-        self.mangastorage = data.get("manga-storage")
-
-    # ============================================================================
-    def readf(self, fname, buffsz=4096):
-        file_sz = os.path.getsize(fname)
-        self.set_header('Content-Type', "image/png")
-        self.set_header('Content-Length', file_sz)
-
-        with open(fname, 'rb') as f:
-            while True:
-                data = f.read(buffsz)
-
-                if not data:
-                    break
-
-                self.write(data)
-
-        self.finish()
+    def initialize(self, data):
+        super(Page, self).initialize(**data)
+        self.storage = data.get("storage")  # type: str
+        self.db = data.get("db",  None)  # type: Base
 
     def get(self, mhash, chash, imageid):
 
-        chapter = self.manga.get_manga_chapt(mhash, chash)
+        mitem = MangaItem(self.db, mhash)
+        chapter = mitem.get_chapter(chash)
         imageid = int(imageid)
 
         if not chapter:
@@ -47,34 +29,17 @@ class Page(web.RequestHandler):
 
         page = "{}.png".format(imageid)
 
-        chapterp = "{}. {}".format(chapter["index"], chapter["chapter"])
-
-        pagep = os.path.join(self.mangastorage, chapter["path"], chapterp, page)
+        pagep = os.path.join(self.storage, mitem.path, chash, page)
 
         if not os.path.exists(pagep):
             self.send_error(404)
             return
 
-        self.readf(pagep)
+        self.writef(pagep, "image/png")
 
-        cookie = self.get_secure_cookie("dfsid", None)
-
-        if not cookie:
-            return
-
-        cookie = cookie.decode()
-
-        user = self.users.get_by_cookie(cookie)
+        user = self.get_userdata()
 
         if not user:
             return
 
-        with self.db.connect() as connection:
-            c = connection.cursor()
-
-            c.execute(Base.source("sql/set_page_readed.sql"), {
-                "pgid": imageid,
-                "uiid": user["id"],
-                "ciid": chapter["id"],
-                "miid": chapter["mangaid"]
-            })
+        mitem.set_readed(user["id"], chapter["id"], imageid)

@@ -1,0 +1,113 @@
+{% extends "base.tt" %}
+
+{% block style %}
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/notify.css") }}">
+<link rel="stylesheet" type="text/css" href="{{ static_url("style/users.css") }}">
+{% end %}
+
+{% block javascript %}
+<script src="{{ static_url("javascript/notify.js") }}"></script>
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
+<script src="{{ static_url("javascript/users.js") }}"></script>
+{% end %}
+
+{% block body %}
+<div class="nav">
+    <div class="nav__buttons">
+        <a href="/" class="nav__logo" title="На главную"></a>
+        <a href="/adm" class="fa fa-server" title="Админ панель"></a>
+        <span data-action="add-user" class="fa fa-user-plus" title="Добавить пользователя"></span>
+        <span data-action="add-group" class="fa fa-group" title="Добавить группу"></span>
+    </div>
+</div>
+<div id="main">
+
+    <table class="users">
+        <thead>
+        <tr>
+            <th>Логин</th>
+            <th>Пароль</th>
+            <th>Группа</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <table class="groups">
+        <thead>
+        <tr>
+            <th>Группа</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+{% end %}
+
+{# TODO: Оптимизировать шаблоны! #}
+{% block client-teplates %}
+
+<script type="text/template" id="template-user">
+<tr data-uid="{id}" data-login="{login}" data-passwd="{passwd}" data-gid="{group_id}">
+    <td>{login}</td>
+    <td>{passwd}</td>
+    <td>{group_name}</td>
+    <td>
+        <input type="button" value="E" class="action-edit">
+        <input type="button" value="X" class="action-remove">
+    </td>
+</tr>
+</script>
+
+<script type="text/template" id="template-group">
+<tr data-name="{name}" data-gid="{id}">
+    <td>{name}</td>
+    <td>
+        <input type="button" value="E" class="action-edit">
+        <input type="button" value="X" class="action-remove">
+    </td>
+</tr>
+</script>
+
+
+<script type="text/template" id="template-user-edit">
+<div id="popup-main" title="Press ESC to close popup.">
+    <div class="popup-centred" title="">
+        <input type="text" name="login" placeholder="Login" value="{login}">
+        <input type="text" name="passwd" placeholder="Password" value="{passwd}">
+        <select name="group" title="Select group.">
+        </select>
+        <input type="button" value="cancel" data-action="popup-cancel" class="action-cancel">
+        <input type="button" value="send" data-action="user-edit" class="action-send">
+    </div>
+</div>
+</script>
+
+<script type="text/template" id="template-user-add">
+<div id="popup-main" title="Press ESC to close popup.">
+    <div class="popup-centred" title="">
+        <input type="text" name="login" placeholder="Login">
+        <input type="text" name="passwd" placeholder="Password">
+        <select name="group" title="Select group.">
+            <option value="0" selected></option>
+        </select>
+        <input type="button" value="cancel" data-action="popup-cancel" class="action-cancel">
+        <input type="button" value="send" data-action="user-add" class="action-send">
+    </div>
+</div>
+</script>
+
+<script type="text/template" id="template-group-add">
+<div id="popup-main" title="Press ESC to close popup.">
+    <div class="popup-centred" title="">
+        <input type="text" name="name" value="{name}" placeholder="Name">
+        <input type="button" value="cancel" data-action="popup-cancel" class="action-cancel">
+        <input type="button" value="send" data-action="group-add" class="action-send">
+    </div>
+</div>
+</script>
+{% end %}

@@ -7,69 +7,73 @@
 
 {% block javascript %}
 <!-- Локальные Джаба скрибты -->
-<script src="{{ static_url("javascript/jquery.touchswipe.min.js") }}"></script>
-{#<script src="{{ static_url("javascript/jquery.mobile-events.min.js") }}"></script>#}
+<script src="{{ static_url("lib/jquery.fullscreen.min.js") }}"></script>
 <script src="{{ static_url("javascript/auxiliary.js") }}"></script>
 <script src="{{ static_url("javascript/hash.js") }}"></script>
 <script src="{{ static_url("javascript/view.mobile.js") }}"></script>
 {% end %}
 
 {% block body %}
-<div id="controls">
-    <div class="icon-buttons">
-        <a href="/" data-action="index"></a>
-        <a href="/search" data-action="search"></a>
+<div class="nav">
+    <div class="nav__buttons">
+        <a href="/" class="nav__logo" title="На главную"></a>
+        <a href="/search" class="fa fa-search" title="Поиск / Фильтры"></a>
     </div>
-    <div class="manga-title">{{ manga["title"] }}</div>
+    <div class="nav__manga-title">{{ manga.title }}</div>
 </div>
 
-<div id="article" data-mangaid="{{ manga["mhash"] }}">
-    <div class="cover" data-current="{{ 1 }}" style="background-image: url('/m/{{ manga["mhash"] }}/c/{{ 1 }}')"
-         data-covers="{{ manga["covers"] }}"></div>
+<div id="article" data-mangaid="{{ manga.mhash }}">
+ <div class="cover" data-current="{{ 1 }}"  style="background-image: url('/m/{{ manga.mhash }}/c/{{ 1 }}')"
+           data-covers="{{ manga.covers }}"></div>
     <div class="delim-block">Информация:</div>
-    <div class="details">
-        <p><span>Томов:</span> {{ manga["volumes"] }} </p>
-        <p><span>Состояние:</span> {{ manga["state"] }} </p>
-        <p><span>Перевод:</span> {{ manga["translation"] }} </p>
+      <div class="details">
+        <ul>
+          <li><span>Томов:</span> {{ manga.volumes }} </li>
+          <li><span>Состояние:</span> {{ manga.state }} </li>
+          <li><span>Перевод:</span> {{ manga.translation }} </li>
 
-        {% if len(manga["translators"]) > 1 %}
-        <p><span>Переводчики:</span> {{ ", ".join(manga["translators"]) }} </p>
-        {% else %}
-        <p><span>Переводчик:</span> {{ ", ".join(manga["translators"]) }} </p>
-        {% end %}
+          {% if len(manga.translators) > 1 %}
+            <li><span>Переводчики:</span> {{ ", ".join(manga.translators) }} </li>
+          {% else %}
+            <li><span>Переводчик:</span> {{ ", ".join(manga.translators) }} </li>
+          {% end %}
 
-        <p><span>Жанры:</span> {{ ", ".join(manga["genres"]) }} </p>
+          <li><span>Жанры:</span> {{ ", ".join(manga.genres) }} </li>
 
-        {% if len(manga["authors"]) > 1 %}
-        <p><span>Авторы:</span> {{ ", ".join(manga["authors"]) }} </p>
-        {% else %}
-        <p><span>Автор:</span> {{ ", ".join(manga["authors"]) }} </p>
-        {% end %}
+          {% if len(manga.authors) > 1 %}
+            <li><span>Авторы:</span> {{ ", ".join(manga.authors) }} </li>
+          {% else %}
+            <li><span>Автор:</span> {{ ", ".join(manga.authors) }} </li>
+          {% end %}
 
-        <p><span>Год выпуска:</span> {{ manga["year"] }} </p>
+          <li><span>Год выпуска:</span> {{ manga.year }} </li>
 
-        <p>
+          <li>
             <span>Загружено с:</span>
-            <a href="{{ manga["url"] }}" target="_blank">{{ manga["resource"] }}</a>
-        </p>
-    </div>
+            <a href="{{ manga.url }}" target="_blank">{{ manga.resource }}</a>
+          </li>
+
+        </ul>
+      </div>
     <div class="delim-block">Описание:</div>
-    <div class="description">{{ manga["description"] }}</div>
+    <div class="description">{{ manga.description }}</div>
     <div class="delim-block">Все главы манги:</div>
     <div class="chaptlist">
-      {% for chapt in manga["chapters"] %}
-        <div {% if chapt["readed"] == chapt["pages"] %} class="readed_chapter" {% end %}
-
-            title="{{ chapt["chapter"] }}" data-chaptid="{{ chapt["chash"] }}" data-index="{{ chapt["index"] }}">
-
+      {% for chapt in manga.chapters %}
+        {% if user %}
+            {% set readed = manga.get_readed_count(chapt["id"], user.get("id", None)) %}
+        {% else %}
+            {% set readed = 0 %}
+        {% end %}
+        <div title="{{ chapt["chapter"] }}" data-chaptid="{{ chapt["chash"] }}" data-index="{{ chapt["index"] }}">
           {{ chapt["chapter"] }}
-
-            {% if chapt["readed"] != chapt["pages"] and chapt["readed"] > 0 %}
-                <span class="viewer_chapts_reading">{{ chapt["readed"] }} / {{ chapt["pages"] }}</span>
-            {% elif not chapt["readed"] %}
+            {% if readed == chapt["pages"] %}
+                <span class="view-readed fa fa-check"></span>
+            {% elif readed != chapt["pages"] and readed > 0 %}
+                <span class="viewer_chapts_reading">{{ readed }} / {{ chapt["pages"] }}</span>
+            {% elif not readed %}
                 <span class="viewer_chapt_pnum">{{ chapt["pages"] }}</span>
             {% end %}
-
         </div>
       {% end %}
     </div>
@@ -78,34 +82,34 @@
 {% end %}
 
 {% block client-teplates %}
-<script type="text/template" id="template-chapter">
+<script type="text/template" id="tt-chapter">
     <div id="chapter-view">
-        <div class="chapt-blur" style="background-image: url('/r/{mhash}/{chash}')"></div>
+        <div class="chapt-blur"></div>
         <div class="chapter-controls">
-            <div class="icon-buttons">
-                <span data-action="close" title="Закрыть главу"></span>
-            </div>
+            <div data-action="close" class="fa fa-close"></div>
         </div>
         <div class="chapt-flexbox"></div>
     </div>
 </script>
 
-<script type="text/template" id="template-thumbnail">
+<script type="text/template" id="tt-thumbnail">
     <div class="chapt-thumb" data-image="{image}" style="background-image: url('/t/{mhash}/{chash}/{image}')"></div>
 </script>
 
-<script type="text/template" id="template-page">
-    <div class="manga-page">
-        <div class="manga-page-close"></div>
-        <img src="{src}">
+<script type="text/template" id="tt-page">
+    <div id="manga-page">
+        <div class="page-controls">
+            <div data-action="close" class="fa fa-close"></div>
+        </div>
+        <img>
     </div>
 </script>
 
-<script type="text/template" id="template-coverlist">
+<script type="text/template" id="tt-coverlist">
     <div class="covers-list">
-        <div class="covers-arrow-left"></div>
+        <div class="covers-arrow-left"><span class="fa fa-chevron-left"></span></div>
         <div class="covers-text">{text}</div>
-        <div class="covers-arrow-right"></div>
+        <div class="covers-arrow-right"><span class="fa fa-chevron-right"></span></div>
     </div>
 </script>
 {% end %}

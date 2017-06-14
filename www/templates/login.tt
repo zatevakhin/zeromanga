@@ -6,17 +6,17 @@
 {% end %}
 
 {% block javascript %}
+<script src="{{ static_url("javascript/auxiliary.js") }}"></script>
 <script src="{{ static_url("javascript/notify.js") }}"></script>
-<script src="{{ static_url("javascript/base64.js") }}"></script>
 <script src="{{ static_url("javascript/login.js") }}"></script>
 {% end %}
 
 {% block body %}
-<div id="form">
-  <form action="" method="POST">
-    <input type="text"     name="xloginx" placeholder="Login">
-    <input type="password" name="xpasswx" placeholder="Password">
-    <input type="submit"   value="ENTER">
-  </form>
+<div class="form">
+    <form action="" method="POST">
+        <input type="text" class="form__login" name="zm_login" placeholder="Login">
+        <input type="password" class="form__passwd" name="zm_passwd" placeholder="Password">
+        <input type="submit" class="form__submit" value="ENTER">
+    </form>
 </div>
 {% end %}

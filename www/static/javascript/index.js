@@ -1,122 +1,106 @@
 "use strict";
 
-function MangaClient() {
-    this.count = cookie.get("manga-cnt") || 0;
-    cookie.del("manga-cnt");
-    this.articles = 20;
+class MangaIndex {
+
+    constructor() {
+        zk.listen();
+
+        zk.set("paging::next", "arrowright", () => {
+            let offset = this.offset + this.page_articles;
+            Hash.set({"O": (offset >= this.count ? this.offset : offset)});
+        });
+
+        zk.set("paging::prev", "arrowleft", () => {
+            let offset = this.offset - this.page_articles;
+            Hash.set({"O": (offset > 0 ? offset : 0)});
+        });
+
+        this.count = cookie.get("manga-cnt") || 0;
+        cookie.remove("manga-cnt");
+
+        this.page_articles = 20;
+
+        this.st_title = ["Выпуск манги продолжается", "Манга завершена"];
+        this.tr_title = ["Перевод манги продолжается", "Перевод манги завершен"];
+    }
+
+    static showLoading() {
+        $("body > .loading").remove();
+        $("body").append(aux.template("tt-loading"));
+    }
+
+    static hideLoading() {
+        $("body > .loading").fadeOut(500, function () {
+            $(this).remove();
+        });
+    }
+
+    get offset() {
+        let offset = parseInt(Hash.get("O")) || 0;
+        return ((offset && offset >= 0 && offset <= this.count) ? offset : 0);
+    }
+
+    loadArticles() {
+        $.post("/", {action: "load", articles: this.page_articles, offset: this.offset})
+            .always(MangaIndex.hideLoading)
+            .fail(MangaIndex.hideLoading)
+            .done((data) => {
+                if (JSON.isjson(data)) {
+                    this.renderArticles(JSON.parse(data));
+                }
+            });
+    }
+
+    renderArticles(data) {
+        $("body > .articles").empty()
+            .append(data.map((manga) => {
+                return aux.template("tt-article", {
+                    cover: aux.rand(1, manga.covers + 1),
+                    tr_title: this.tr_title[ +manga.translation ],
+                    st_title: this.st_title[ +manga.state ],
+                    translation: manga.translation,
+                    short: manga.title.cut(50),
+                    state: manga.state,
+                    mhash: manga.mhash,
+                    title: manga.title
+                });
+            }));
+    }
+
+    * generatePagination() {
+        for (let i = 0, j = 0; i < this.count; i += this.page_articles, j++) {
+            yield {"page": j, "offset": i};
+        }
+    }
+
+    renderPagination() {
+        let pagination = $("body .nav__pagination");
+        pagination.empty();
+
+        for (let item of this.generatePagination()) {
+            pagination.append(
+                aux.template(item.offset === this.offset ? "tt-paging-span" : "tt-paging-link", item)
+            );
+        }
+    }
+
+    displayAll() {
+        MangaIndex.showLoading();
+        this.renderPagination();
+        this.loadArticles();
+    }
+
+    run() {
+        this.displayAll();
+        $(window).on("hashchange", () => {
+            this.displayAll();
+        });
+
+        zk.bind("paging::next", "paging::prev");
+    }
 }
 
-MangaClient.prototype.run = function () {
-    let self = this;
-    this.showLoading();
-
-    this.load();
-
-    this.bindLinks();
-
-    this.displayPagination();
-
-    let offset = parseInt(Hash.get("O")) || 0;
-
-    $('div.pagination').find(`a[href="#O:${offset}"]`).addClass('current');
-
-    $("#articles").on('click', 'div.article-info', function (evt) {
-        evt.stopPropagation();
-    });
-
-    $(window).on("hashchange", function () {
-        self.showLoading();
-        $("#articles").empty();
-        self.load();
-    });
-};
-
-
-MangaClient.prototype.showLoading = function () {
-    $("#loading").remove();
-    $("body").append(aux.template("template-loading"));
-};
-
-MangaClient.prototype.load = function () {
-    let self = this;
-    let offset = parseInt(Hash.get("O")) || 0;
-    offset = ((offset && offset >= 0 && offset <= this.count) ? offset : 0 );
-
-    let jqxhr = $.post("/", {action:"load", articles: 20, offset: offset});
-    jqxhr.done(function (data) {
-        self.displayPage(data);
-    });
-
-    jqxhr.fail = this.loadingEnd;
-    jqxhr.always = this.loadingEnd;
-};
-
-MangaClient.prototype.genPagination = function () {
-    let pagin = [];
-    for (let i = 0, j = 0; i < this.count; i += this.articles, j++) {
-        pagin.push({"page": j, "offset": i});
-    }
-    return pagin;
-};
-
-MangaClient.prototype.displayPagination = function () {
-    let pagination = this.genPagination();
-
-    for (let i = 0; i < pagination.length; i++) {
-        let obj = pagination[i];
-        $("<a/>", {
-            "href": `#O:${obj.offset}`,
-            "data-page": obj.page,
-            "text": obj.page
-        }).appendTo('div.pagination');
-    }
-
-    $("div.pagination").on("click", "a", function () {
-        $('div.pagination a').removeClass('current');
-        $(this).addClass("current")
-    })
-};
-
-MangaClient.prototype.bindLinks = function () {
-    $("#articles").on('click', 'div.article', function (evt) {
-        if (!(evt.target.className == "article")) {
-            return;
-        }
-
-        let mangaid = $(this).data("mangaid");
-        window.location.href = `/manga/${mangaid}`;
-    });
-};
-
-MangaClient.prototype.loadingEnd = function () {
-    $("#loading").fadeOut(500, function () {
-        $(this).remove();
-    });
-};
-
-MangaClient.prototype.displayPage = function (data) {
-    if (data && JSON.isjson(data)) {
-        let mangalist = JSON.parse(data);
-
-        for (let i in mangalist) {
-            if (mangalist.hasOwnProperty(i)) {
-                let manga = mangalist[i];
-                let coverrange = aux.range(1, manga["covers"] + 1);
-                let cover = `/m/${manga.mhash}/c/${coverrange.rand()}`;
-
-                $("#articles").append(aux.template("template-article", {
-                    shorttitle: manga.title.cut(50),
-                    mhash: manga.mhash,
-                    title: manga.title,
-                    cover: cover
-                }));
-            }
-        }
-    }
-};
-
-
-$(function () {
-    let mcApp = new MangaClient();
-    mcApp.run();
+$(() => {
+    let app = new MangaIndex();
+    app.run();
 });

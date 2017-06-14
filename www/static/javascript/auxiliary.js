@@ -15,11 +15,18 @@ String.prototype.cut = function (l) {
     return this;
 };
 
+String.prototype.toTitleCase = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 Array.prototype.rand = function () {
     return this[Math.floor(Math.random() * (this.length - 1))];
 };
 
 let aux = {
+    rand: function (min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    },
     range: function (begin, end) {
         let range = [];
         for (let i = begin; i < end; ++i) {
@@ -27,7 +34,7 @@ let aux = {
         }
         return range;
     },
-    template: function(templateid, data) {
+    template: function(templateid, data = {}) {
         return document.getElementById(templateid).innerHTML.replace(/{(\w*)}/g, function(m, key) {
           return data.hasOwnProperty(key) ? data[key] : "";
         });

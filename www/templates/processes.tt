@@ -12,8 +12,10 @@
 {% end %}
 
 {% block body %}
-<div id="controls">
-
+<div class="nav">
+    <div class="nav__buttons">
+        <a href="/" class="nav__logo" title="На главную"></a>
+    </div>
 </div>
 <div id="main">
     <div class="process-list-head"></div>

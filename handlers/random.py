@@ -1,53 +1,32 @@
 # -*- coding: utf-8 -*-
 
+from core import BaseRequestHandler
+from core import MangaItem
+
 from random import randint as rand
-import tornado.web as web
 import os
 
 
-class RandomPage(web.RequestHandler):
+class RandomPage(BaseRequestHandler):
 
-    def __init__(self, application, request, **kwargs):
-        super(RandomPage, self).__init__(application, request)
-        data = kwargs.get("data", {})
+    def initialize(self, data):
         self.db = data.get("db",  None)
-        self.manga = data.get("manga",  None)
-        self.mangastorage = data.get("manga-storage")
-
-    # ============================================================================
-    def readf(self, fname, buffsz=4096):
-        file_sz = os.path.getsize(fname)
-        self.set_header('Content-Type', "image/png")
-        self.set_header('Content-Length', file_sz)
-
-        with open(fname, 'rb') as f:
-            while True:
-                data = f.read(buffsz)
-
-                if not data:
-                    break
-
-                self.write(data)
-
-        self.finish()
+        self.storage = data.get("storage")
 
     def get(self, mhash, chash):
 
-        chapter = self.manga.get_manga_chapt(mhash, chash)
+        mitem = MangaItem(self.db, mhash)
+        chapter = mitem.get_chapter(chash)
 
         if not chapter:
             self.send_error(404)
             return
 
-        page = "{}.png".format(rand(1, chapter["pages"]))
-
-        chapterp = "{}. {}".format(chapter["index"], chapter["chapter"])
-
-        pagep = os.path.join(self.mangastorage, chapter["path"], chapterp, page)
+        pagep = os.path.join(self.storage, mitem.path, chash, "{}.png".format(rand(1, chapter["pages"])))
 
         if not os.path.exists(pagep):
             self.send_error(404)
             return
 
-        self.readf(pagep)
+        self.writef(pagep, "image/png")
 

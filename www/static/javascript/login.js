@@ -1,50 +1,46 @@
-let codes = {
-    "0x00": {"title": "Ошибка", "msg": "Неизвестная ошибка.",            "time": 15},
-    "0x01": {"title": "Ошибка", "msg": "Сессия не авторизирована!",      "time": 10},
-    "0x02": {"title": "Ошибка", "msg": "Неправельный логин или пароль.", "time": 10},
-    "0x03": {"title": "Ошибка", "msg": "Введите логин.",                 "time": 10},
-    "0x04": {"title": "Ошибка", "msg": "Введите пароль.",                "time": 10}
-};
+"use strict";
 
+class ZeroMangaLogin {
+    constructor() {
+        this.errors = {
+            "E1":{"status": "Error", "msg": "Login is empty!"},
+            "E2":{"status": "Error", "msg": "Password is empty!"},
+            "E3":{"status": "Error", "msg": "Incorrect login or password!"}
+        }
+    }
 
-function ALogin() {
-    this.regexErrorCode = new RegExp("^0x([a-f0-9]{2})$", "gi");
+    getError() {
+        let error = this.errors[cookie.get("code")];
+        cookie.remove("code");
+        return error;
+    }
+
+    run() {
+
+        if (cookie.get("code")) {
+            let error = this.getError();
+            Notify.show(error.status, error.msg, 5);
+        }
+
+        $('body .form form').on('submit', () => {
+            let login = $("body input.form__login").val();
+            let password = $("body input.form__passwd").val();
+
+            if (!login) {
+                Notify.show("Error", "Enter your login!", 5);
+                return false;
+            }
+
+            if (!password) {
+                Notify.show("Error", "Enter your password!", 5);
+                return false;
+            }
+        });
+    }
 }
 
 
-ALogin.prototype.run = function () {
-    let self = this;
-
-    if (self.regexErrorCode.test(cookie.get("ecode"))) {
-        self.showErrorByCode(cookie.get("ecode"));
-        cookie.del("ecode");
-    }
-
-    $('#form').on('submit', function () {
-        if (!$("input[type=password]").val()) {
-            self.showErrorByCode("0x03");
-            return false;
-        }
-
-        if (!$("input[type=text]").val()) {
-            self.showErrorByCode("0x04");
-            return false;
-        }
-    })
-
-};
-
-
-ALogin.prototype.showErrorByCode = function (code) {
-    if (code && code in codes) {
-        Notify.show(codes[code].title, codes[code].msg, codes[code].time);
-    } else {
-        Notify.show(codes["000"].title, codes["000"].msg, codes["000"].time);
-    }
-};
-
-
-$(function () {
-    let alApp = new ALogin();
-    alApp.run();
+$(() => {
+    let app = new ZeroMangaLogin();
+    app.run();
 });

@@ -29,7 +29,7 @@ let cookie = {
             return null;
         }
     },
-    del: function (cookie_name) {
+    remove: function (cookie_name) {
         let cookie_date = new Date();
         cookie_date.setTime(cookie_date.getTime() - 1);
         document.cookie = cookie_name + "=; expires=" + cookie_date.toUTCString();

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from core.download import MangaControl
-import tornado.web as web
+from tornado import web
 import logging
 import os
 
@@ -9,13 +8,14 @@ from PIL import Image
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+
 class Thumbnails(web.RequestHandler):
 
     def __init__(self, application, request, **kwargs):
         super(Thumbnails, self).__init__(application, request)
         data = kwargs.get("data", {})
         self.manga = data.get("manga", None)
-        self.mangastorage = data.get("manga-storage")
+        self.storage = data.get("storage")
 
     # ============================================================================
     def readf(self, fname, buffsz=4096):
@@ -34,20 +34,17 @@ class Thumbnails(web.RequestHandler):
 
         self.finish()
 
-    def get(self, mangaid, chaptid, thumbid):
+    def get(self, mhash, chash, thumbid):
 
-        chapter = self.manga.get_manga_chapt(mangaid, chaptid)
+        chapter = self.manga.get_manga_chapt(mhash, chash)
 
-        # Если главы нету то 404
         if not chapter:
             self.send_error(404)
             return
 
-        chaptname = "{}. {}".format(chapter["index"], chapter["chapter"])
+        manga_chapter = os.path.join(self.storage, chapter["resource"], mhash, chash)
 
-        manga_chapter = MangaControl.chapterpath(self.mangastorage, chapter["path"], chaptname)
-
-        manga_thumbnails = MangaControl.thumbpath(self.mangastorage, chapter["path"], chapter["chash"])
+        manga_thumbnails = os.path.join(self.storage, chapter["resource"], mhash, ".meta", "t", chash)
 
         current_thumb = os.path.join(manga_thumbnails, "{}.jpg".format(thumbid))
 
