@@ -29,8 +29,8 @@ let Hash = {
 
     get: function (key) {
         let hash = this.parse();
-        
-        if (key && key instanceof String) {
+
+        if (key && typeof(key) === "string") {
             return hash[key];
         }
 
